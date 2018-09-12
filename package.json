@@ -1,0 +1,12 @@
+{
+  "name": "dat-rpc",
+  "version": "0.1.0",
+  "description": "Run remote scripts with dat",
+  "main": "index.js",
+  "repository": "",
+  "author": "Yerko Palma <yerko.palma@usach.cl>",
+  "dependencies": {
+    "dat-node": "^3.5.12",
+    "vorpal": "^1.12.0"
+  }
+}
