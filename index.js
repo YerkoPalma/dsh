@@ -3,8 +3,8 @@
 const vorpal = require('vorpal')()
 const Dat = require('util').promisify(require('dat-node'))
 const SHELL_FILE = '.dshell'
-const DAT_FOLDER = '.dat-rpc'
-const DAT_RESULTS = '.dat-res'
+const DAT_FOLDER = '.datsrc'
+const DAT_RESULTS = '.datdest'
 const path = require('path')
 const writeFile = require('util').promisify(require('fs').writeFile)
 let dat
@@ -45,5 +45,5 @@ vorpal.
   })
 
 vorpal
-  .delimiter('drpc >')
+  .delimiter('dsh >')
   .show()

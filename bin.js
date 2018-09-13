@@ -6,8 +6,8 @@ const { exec } = require('child_process')
 const Dat = require('util').promisify(require('dat-node'))
 const readFile = require('util').promisify(require('fs').readFile)
 const writeFile = require('util').promisify(require('fs').writeFile)
-const DAT_INPUT = '.dat-in'
-const DAT_OUTPUT = '.dat-out'
+const DAT_INPUT = '.din'
+const DAT_OUTPUT = '.dout'
 const QUEUE_FILE = '.dshell'
 
 const key = process.argv[2]
