@@ -13,6 +13,7 @@ let dat
 vorpal
   .command('run [commands...]', 'Run commands when connected to a Dat')
   .action(async function (args, next) {
+    // TODO: check if connected before actually running anything
     await writeFile(path.join(DAT_FOLDER, SHELL_FILE), args.commands.join(' '))
     next()
   })
@@ -23,6 +24,8 @@ vorpal
     // make folders
     await mkdirp(DAT_FOLDER)
     await mkdirp(DAT_RESULTS)
+    // TODO: make .datignore (if it doesn't exists)
+    // TODO: get key if exists
 
     dat = await Dat(DAT_FOLDER)
     dat.importFiles({ watch: true, ignoreHidden: false })
@@ -36,6 +39,7 @@ vorpal
     }, async function (result) {
       // results dat
       const key = result.key
+      // TODO: save key
       const datIn = await Dat(DAT_RESULTS, { key })
       datIn.joinNetwork()
     })

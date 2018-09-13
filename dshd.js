@@ -11,6 +11,8 @@ const DAT_INPUT = '.din'
 const DAT_OUTPUT = '.dout'
 const QUEUE_FILE = '.dshell'
 
+// TODO: save key if provided
+// TODO: use saved key if exists
 const key = process.argv[2]
 
 ;(async function () {

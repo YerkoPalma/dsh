@@ -1,12 +1,17 @@
 {
-  "name": "dat-rpc",
+  "name": "dsh",
   "version": "0.1.0",
   "description": "Run remote scripts with dat",
-  "main": "index.js",
-  "repository": "",
+  "main": "dsh.js",
+  "files": [
+    "dsh.js",
+    "dshd.js"
+  ],
+  "repository": "YerkoPalma/dsh",
   "author": "Yerko Palma <yerko.palma@usach.cl>",
   "dependencies": {
     "dat-node": "^3.5.12",
+    "mkdirp": "^0.5.1",
     "vorpal": "^1.12.0"
   }
 }
