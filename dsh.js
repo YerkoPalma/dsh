@@ -6,6 +6,7 @@ const SHELL_FILE = '.dshell'
 const DAT_FOLDER = '.datsrc'
 const DAT_RESULTS = '.datdest'
 const path = require('path')
+const mkdirp = require('util').promisify(require('mkdirp'))
 const writeFile = require('util').promisify(require('fs').writeFile)
 let dat
 
@@ -19,6 +20,10 @@ vorpal
 vorpal
   .command('start')
   .action(async function (args, next) {
+    // make folders
+    await mkdirp(DAT_FOLDER)
+    await mkdirp(DAT_RESULTS)
+
     dat = await Dat(DAT_FOLDER)
     dat.importFiles({ watch: true, ignoreHidden: false })
     dat.joinNetwork()

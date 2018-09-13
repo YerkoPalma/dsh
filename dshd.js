@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const { exec } = require('child_process')
 const Dat = require('util').promisify(require('dat-node'))
+const mkdirp = require('util').promisify(require('mkdirp'))
 const readFile = require('util').promisify(require('fs').readFile)
 const writeFile = require('util').promisify(require('fs').writeFile)
 const DAT_INPUT = '.din'
@@ -13,6 +14,10 @@ const QUEUE_FILE = '.dshell'
 const key = process.argv[2]
 
 ;(async function () {
+  // make folders
+  await mkdirp(DAT_INPUT)
+  await mkdirp(DAT_OUTPUT)
+    
   // get input
   const datIn = await Dat(DAT_INPUT, { key })
   datIn.joinNetwork()
