@@ -7,8 +7,13 @@ const DAT_FOLDER = '.datsrc'
 const DAT_RESULTS = '.datdest'
 const path = require('path')
 const mkdirp = require('util').promisify(require('mkdirp'))
-const writeFile = require('util').promisify(require('fs').writeFile)
+const fs = require('fs')
+const writeFile = require('util').promisify(fs.writeFile)
+const readFile = require('util').promisify(fs.readFile)
+
 let dat
+let datRes
+let key
 
 vorpal
   .command('run [commands...]', 'Run commands when connected to a Dat')
@@ -24,25 +29,33 @@ vorpal
     // make folders
     await mkdirp(DAT_FOLDER)
     await mkdirp(DAT_RESULTS)
-    // TODO: make .datignore (if it doesn't exists)
-    // TODO: get key if exists
+    // TODO: make .datignore only if it doesn't exists
+    await writeFile(path.join(DAT_FOLDER, '.datignore'), '.key')
+    try {
+      key = await readFile(path.join(DAT_FOLDER, '.key'))
+    } catch (err) {}
 
     dat = await Dat(DAT_FOLDER)
     dat.importFiles({ watch: true, ignoreHidden: false })
     dat.joinNetwork()
     this.log('Dat link is: dat://' + dat.key.toString('hex'))
 
-    await this.prompt({
-      type: 'input',
-      name: 'key',
-      message: 'Enter remote Dat key? '
-    }, async function (result) {
-      // results dat
-      const key = result.key
-      // TODO: save key
-      const datIn = await Dat(DAT_RESULTS, { key })
-      datIn.joinNetwork()
-    })
+    if (key) {
+      datRes = await Dat(DAT_RESULTS, { key })
+      datRes.joinNetwork()
+    } else {
+      await this.prompt({
+        type: 'input',
+        name: 'key',
+        message: 'Enter remote Dat key? '
+      }, async function (result) {
+        // results dat
+        key = result.key
+        await writeFile(path.join(DAT_FOLDER, '.key'), key)
+        datRes = await Dat(DAT_RESULTS, { key })
+        datRes.joinNetwork()
+      })
+    }
     next()
   })
 
