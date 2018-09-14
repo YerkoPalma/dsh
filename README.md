@@ -1,6 +1,8 @@
 # `dsh`
 Remotelly run commands using Dat.
 
+![demo-dsh](https://user-images.githubusercontent.com/5105812/45563501-ed55f600-b823-11e8-8165-9edb770e0bdf.gif)
+
 ## How it works
 Creates a folder (`.datsrc`) with the following content
 
