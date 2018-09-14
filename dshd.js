@@ -11,11 +11,18 @@ const DAT_INPUT = '.din'
 const DAT_OUTPUT = '.dout'
 const QUEUE_FILE = '.dshell'
 
-// TODO: save key if provided
-// TODO: use saved key if exists
-const key = process.argv[2]
-
 ;(async function () {
+  let key = process.argv[2]
+  if (!key) {
+    try {
+      key = await readFile(path.join(DAT_INPUT, '.key'))
+    } catch (e) {}
+  }
+  if (!key) {
+    console.log(`Must provide a remote key`)
+    process.exit(1)
+  }
+  await writeFile(path.join(DAT_INPUT, '.key'), key)
   // make folders
   await mkdirp(DAT_INPUT)
   await mkdirp(DAT_OUTPUT)
@@ -26,8 +33,11 @@ const key = process.argv[2]
 
   fs.watchFile(DAT_INPUT, async (current, previous) => {
     // read command
-    const command = await readFile(path.join(DAT_INPUT, QUEUE_FILE), 'utf8')
-    console.log(command)
+    let command
+    try {
+      command = await readFile(path.join(DAT_INPUT, QUEUE_FILE), 'utf8')
+    } catch (e) {}
+
     command && exec(command, async (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`)

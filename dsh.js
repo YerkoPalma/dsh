@@ -10,10 +10,13 @@ const mkdirp = require('util').promisify(require('mkdirp'))
 const fs = require('fs')
 const writeFile = require('util').promisify(fs.writeFile)
 const readFile = require('util').promisify(fs.readFile)
+const unlink = require('util').promisify(fs.unlink)
 
 let dat
 let datRes
 let key
+let stdout
+let stderr
 
 vorpal
   .command('run [commands...]', 'Run commands when connected to a Dat')
@@ -25,10 +28,15 @@ vorpal
 
 vorpal
   .command('start')
+  .option('-q, --quiet')
   .action(async function (args, next) {
     // make folders
     await mkdirp(DAT_FOLDER)
     await mkdirp(DAT_RESULTS)
+    try {
+      await unlink(path.join(DAT_FOLDER, SHELL_FILE))
+    } catch (e) {}
+
     // TODO: make .datignore only if it doesn't exists
     await writeFile(path.join(DAT_FOLDER, '.datignore'), '.key')
     try {
@@ -38,7 +46,7 @@ vorpal
     dat = await Dat(DAT_FOLDER)
     dat.importFiles({ watch: true, ignoreHidden: false })
     dat.joinNetwork()
-    this.log('Dat link is: dat://' + dat.key.toString('hex'))
+    if (!args.options.quiet) this.log('Dat link is: dat://' + dat.key.toString('hex'))
 
     if (key) {
       datRes = await Dat(DAT_RESULTS, { key })
@@ -56,6 +64,15 @@ vorpal
         datRes.joinNetwork()
       })
     }
+    fs.watchFile(DAT_RESULTS, async (current, previous) => {
+      try {
+        stdout = await readFile(path.join(DAT_RESULTS, '.stdout'), 'utf8')
+        stderr = await readFile(path.join(DAT_RESULTS, '.stderr'), 'utf8')  
+      } catch (e) {}
+
+      if (stdout) this.log(stdout)
+      if (stderr) this.log(stderr)
+    })
     next()
   })
 
